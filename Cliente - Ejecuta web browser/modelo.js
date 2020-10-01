@@ -28,15 +28,21 @@ function Juego(){
         return codigo.join('');
     }
     function Partida(num,owner){
-        this.numUsuarios = num;
+        this.maximo = num;
         this.owner = owner;
+
+        
         this.usuarios=[]; //El index 0 será el owner
         
         //this.usuarios={} // Version array asociativo, cada usuario tiene su nick
 
-        this.agregarusuario=function(){
+        this.agregarusuario=function(nick){
 
             //Por hacer
+            /*
+                Comprueba si el nick es único 
+                Comprueba si es el usuario final (n)
+            */ 
         }
 
         this.agregarusuario(owner);
