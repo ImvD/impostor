@@ -1,3 +1,5 @@
+
+
 function Juego(){
     this.partidas ={}
     this.crearPartida = function(num,owner){ //Es un método, le paso n jugadores y un propietario
@@ -9,6 +11,7 @@ function Juego(){
             this.partidas[codigo] = new Partida(num,owner.nick)
             owner.partida=this.partidas[codigo]
         }
+        return codigo;
     } 
 
     //Añado un usuario a la partida si esta está creada
@@ -37,7 +40,7 @@ function Partida(num,owner){
         //Administrador
         this.nickOwner = owner
         //Determina la fase del juego
-        this.fase = Inicial()
+        this.fase = new Inicial()
         //Lista de usuarios
         this.usuarios={} //El index 0 será el owner
         
@@ -64,48 +67,89 @@ function Partida(num,owner){
             //Si llegamos al máximo de usuarios en la partida, 
             //Cambiamos la fase a jugando
             if(Object.keys(this.usuarios).length>=this.maximo){
-                this.fase = new Jugando()
+                this.fase = new Completado()
             }
         }
-        this.iniciarPartida = function(){
-            
+        this.comprobarMinimo=function(){
+            return Object.keys(this.usuarios).length>=4
         }
-        this.agregarusuario(owner);
+
+        this.iniciarPartida = function(){
+            this.fase.iniciarPartida(this);
+        }
+        this.abandonarPartida=function(){
+            this.fase.abandonarPartida(nick,this);
+        }
+        this.eliminarUsuario=function(nick){
+            delete this.usuarios[nick];
+        }
+        this.agregarUsuario(owner);
 }
 function Inicial(){
     //Llamas al método dentro de la función
     //Comprueba que puede agregar al usuario
+    this.nombre="inicial";
         this.agregarUsuario=function(nick,partida){
-            partida.puedeAgregarusuario(nick)
+            partida.puedeAgregarusuario(nick);
         }
     //No puede iniciarla porque no hay jugadores aún
         this.iniciarPartida=function(partida){
-            console.log("Faltan jugadores")
+            console.log("Faltan jugadores");
+        }
+        this.abandonarPartida=function(nick,partida){
+            partida.eliminarUsuario(nick);
+            //Comprobar si no quedan usuarios
         }
 }
 function Completado(){
+    this.nombre="completado"
+    this.iniciarPartida=function(partida){
+        partida.fase = new Jugando();
+    }
+    this.agregarUsuario=function(nick,partida){
+        console.log("La partida ya ha comenzado");
+    }
+    this.abandonarPartida=function(nick,partida){
+        partida.eliminarUsuario(nick);
+        //Eliminar al usuario
+        //Comprobar el nº de usuarios
+       //partida.fase = new Inicial();
+    }
 
 }
 function Jugando(){
-
-            console.log("La partida ya ha comenzado");
+    this.agregarUsuario=function(nick,partida){
+        console.log("La partida ya ha comenzado");
+    }
+    this.iniciarPartida=function(partida){
+    }      
+    this.abandonarPartida=function(nick,partida){
+        //Comprobar si ha terminado la partida
+        partida.eliminarUsuario(nick);
+    }  
 }
 function Final() {
-        
-        console.log("La partida ya ha terminado");
+    this.agregarUsuario=function(nick,partida){
+        console.log("La partida ya ha comenzado");
+    }
+    this.iniciarPartida=function(partida){
+    }  
 }
 function Usuario(nick){
         this.nick = nick;
-        this.juego = Juego
+        this.juego = juego;
         this.partida
         this.crearPartida=function(num){
-            this.juego
+            return this.juego.crearPartida(num,this)
         }
         this.iniciarPartida = function(){
-
+            this.partida.iniciarPartida()
+        }
+        this.abandonarPartida = function(){
+            this.partida.abandonarPartida(nick)
         }
 }
 
 function randomInt(low,high){
-        return Math.floor(math.random()*(high - low) + low)
+        return Math.floor(Math.random()*(high - low) + low)
 }
