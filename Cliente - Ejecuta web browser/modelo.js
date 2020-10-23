@@ -1,5 +1,6 @@
 
 
+
 function Juego(){
     this.partidas ={}
     this.crearPartida = function(num,owner){ //Es un método, le paso n jugadores y un propietario
